@@ -54,8 +54,8 @@ function parse_args(array $argv): array {
  * Every `FROM wordpress:<wp>-php<php>-fpm` pin in the tree.
  *
  * Returned as a list rather than a single value on purpose: a project can pin
- * the same image in several Dockerfiles — VEO pins it three times across two
- * files — and they must move together. A bump that updates one and not the
+ * the same image in several Dockerfiles — projects commonly pin it two or
+ * three times across separate files — and they must move together. A bump that updates one and not the
  * others produces a stack whose parts disagree, which is far harder to
  * diagnose than a failure to upgrade.
  */
