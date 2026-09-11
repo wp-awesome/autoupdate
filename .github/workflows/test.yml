@@ -21,3 +21,17 @@ jobs:
           coverage: none
       - name: compatibility gate self-test
         run: bash tests/run.sh
+
+  # Same assertions, on the Synology runner. Proves the self-hosted path
+  # actually executes rather than merely registering: a runner can sit online
+  # and idle forever while jobs queue against a label nothing matches.
+  gate-self-hosted:
+    runs-on: [self-hosted, nexapulse]
+    steps:
+      - uses: actions/checkout@v4
+      - name: compatibility gate self-test
+        run: bash tests/run.sh
+      - name: where did this run
+        run: |
+          echo "host: $(uname -srm)"
+          echo "php : $(php -v | head -1)"
