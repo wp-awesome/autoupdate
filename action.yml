@@ -1,0 +1,32 @@
+name: WordPress compatibility gate
+description: >
+  Fails a base-image upgrade when the pinned WordPress or PHP version does not
+  satisfy a minimum declared by a plugin or theme in the repository.
+branding:
+  icon: shield
+  color: blue
+
+inputs:
+  root:
+    description: Repository root to inspect. Defaults to the checked-out workspace.
+    required: false
+    default: ${{ github.workspace }}
+  image:
+    description: >
+      Override the target, e.g. wordpress:7.1-php8.4-fpm. Omit to auto-detect
+      from the Dockerfiles, which is what nearly every project should do.
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        if ! command -v php >/dev/null; then
+          echo "::error::php is not available on this runner. GitHub-hosted Ubuntu images include it; on a self-hosted runner, install php-cli."
+          exit 1
+        fi
+        args=(--root="${{ inputs.root }}")
+        [ -n "${{ inputs.image }}" ] && args+=(--image="${{ inputs.image }}")
+        php "${{ github.action_path }}/bin/wp-compat-check.php" "${args[@]}"

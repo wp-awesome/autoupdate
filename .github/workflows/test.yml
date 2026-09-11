@@ -4,6 +4,10 @@
 # bad merge in all of them simultaneously. Consumers therefore pin a released
 # tag rather than the default branch, and the gate's exit-code contract is
 # asserted on every push.
+# A PUBLIC repository must not dispatch to a self-hosted runner: a pull request
+# from any fork would then execute untrusted code on that machine. The
+# self-hosted path was verified before this repo was published; that job is
+# deliberately gone rather than merely disabled.
 name: test
 
 on:
@@ -21,17 +25,3 @@ jobs:
           coverage: none
       - name: compatibility gate self-test
         run: bash tests/run.sh
-
-  # Same assertions, on a self-hosted runner. Proves the self-hosted path
-  # actually executes rather than merely registering: a runner can sit online
-  # and idle forever while jobs queue against a label nothing matches.
-  gate-self-hosted:
-    runs-on: [self-hosted, linux, x64]
-    steps:
-      - uses: actions/checkout@v4
-      - name: compatibility gate self-test
-        run: bash tests/run.sh
-      - name: where did this run
-        run: |
-          echo "host: $(uname -srm)"
-          echo "php : $(php -v | head -1)"
