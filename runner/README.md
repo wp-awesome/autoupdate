@@ -5,13 +5,12 @@ libraries the .NET-based runner links against — so it runs in a container.
 That is the supported shape on Synology, not a workaround.
 
 Built from the official runner tarball rather than a third-party runner image,
-because this executes repository code on a NAS that also carries several
-clients' preview environments.
+because this executes repository code on a host that may also carry other tenants.
 
 ## Deliberately no Docker socket
 
 The compatibility gate needs only PHP. Mounting the host socket would give
-every job root over every other tenant on the NAS, so build access is a
+every job root over every other tenant on that host, so build access is a
 separate decision with a separate blast radius — not a default.
 
 ## Ephemeral, and why the token is per-job
@@ -30,8 +29,8 @@ not. The entrypoint clears it first.
 
 ## Run
 
-    docker run -d --name gh-runner-wp-awesome --restart unless-stopped \
-      -e ORG=wp-awesome -e RUNNER_NAME=nexapulse-dsm \
-      -e RUNNER_LABELS=self-hosted,linux,x64,nexapulse \
-      -v /volume1/docker/gh-runner/token:/run/secrets/gh-token:ro \
+    docker run -d --name gh-runner --restart unless-stopped \
+      -e ORG=<your-org> -e RUNNER_NAME=<runner-name> \
+      -e RUNNER_LABELS=self-hosted,linux,x64,<host-label> \
+      -v $TOKEN_PATH:/run/secrets/gh-token:ro \
       gh-runner-dsm:v2
