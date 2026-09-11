@@ -1,0 +1,29 @@
+# Copy to .github/dependabot.yml in a consuming WordPress project.
+#
+# Deliberately NOT a scheduled GitHub Actions workflow. Actions disables
+# `schedule` triggers after 60 days of repository inactivity and does not
+# re-enable them, which would silently stop updates on exactly the quietest
+# sites — the ones least likely to have anyone checking. Dependabot runs on
+# GitHub's own infrastructure and is not subject to that rule.
+#
+# TO SUSPEND UPDATES FOR AN UNPAID PROJECT: delete this file, and close any
+# open Dependabot pull requests in the same commit. Leaving them open means
+# they auto-merge as soon as their checks finish. Deleting the workflows
+# instead freezes deployment entirely, including changes you make by hand.
+version: 2
+updates:
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: sunday
+    # Dependabot keeps the image variant fixed and moves the version, so this
+    # proposes WordPress upgrades while holding PHP steady. That split is
+    # intentional: plugins declare a minimum PHP and never a maximum, so the
+    # compatibility gate can never fail a PHP bump — the only evidence a PHP
+    # upgrade is safe comes from the image building and the site booting.
+    # Move PHP deliberately, not on a timer.
+    open-pull-requests-limit: 1
+    labels:
+      - dependencies
+      - wordpress-upgrade

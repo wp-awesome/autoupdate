@@ -1,0 +1,1 @@
+FROM wordpress:7.1-php8.4-fpm@sha256:be8953c8c9552b1497cd037ae19abc4ff4feba3f63709909fefbbeb57e8c5eb9

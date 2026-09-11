@@ -1,0 +1,23 @@
+# Self-test for this repository.
+#
+# This action is consumed by every WordPress project, so a bad merge here is a
+# bad merge in all of them simultaneously. Consumers therefore pin a released
+# tag rather than the default branch, and the gate's exit-code contract is
+# asserted on every push.
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+      - name: compatibility gate self-test
+        run: bash tests/run.sh
